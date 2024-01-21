@@ -131,6 +131,8 @@ do
         --test-build-epoll)              TEST_BUILD_EPOLL=YES       ;;
         --test-build-rtsig)              TEST_BUILD_RTSIG=YES       ;;
 
+	--add-module=*)			 NGX_ADDONS="$NGX_ADDONS $value"  ;;
+
         *)
             echo "$0: error: invalid option \"$option\""
             exit 1

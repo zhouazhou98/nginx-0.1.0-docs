@@ -108,6 +108,36 @@ if [ $HTTP_REWRITE = YES -a $USE_PCRE != DISABLED ]; then
     HTTP_SRCS="$HTTP_SRCS $HTTP_REWRITE_SRCS"
 fi
 
+if test -n "$NGX_ADDONS"; then
+
+    echo configuring additional modules
+
+    for ngx_addon_dir in $NGX_ADDONS
+    do
+        echo "adding module in $ngx_addon_dir"
+
+        ngx_module_type=
+        ngx_module_name=
+        ngx_module_incs=
+        ngx_module_deps=
+        ngx_module_srcs=
+        ngx_module_libs=
+        ngx_module_order=
+        ngx_module_link=ADDON
+
+        if test -f $ngx_addon_dir/config; then
+            . $ngx_addon_dir/config
+
+            echo " + $ngx_addon_name was configured"
+
+        else
+            echo "$0: error: no $ngx_addon_dir/config was found"
+            exit 1
+        fi
+    done
+fi
+
+
 if [ $HTTP_SSL = YES ]; then
     USE_OPENSSL=YES
     have=NGX_HTTP_SSL . auto/have
@@ -137,6 +167,8 @@ if [ $HTTP = YES ]; then
              $HTTP_COPY_FILTER_MODULE \
              $HTTP_RANGE_BODY_FILTER_MODULE \
              $HTTP_NOT_MODIFIED_FILTER_MODULE"
+
+    NGX_ADDON_DEPS="$NGX_ADDON_DEPS \$(HTTP_DEPS)"
 fi
 
 IMAP_MODULES=$IMAP_MODULE
