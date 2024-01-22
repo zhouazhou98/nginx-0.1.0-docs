@@ -106,6 +106,7 @@ nginx: \
 	objs/src/os/unix/ngx_linux_init.o \
 	objs/src/event/modules/ngx_rtsig_module.o \
 	objs/src/event/modules/ngx_epoll_module.o \
+	objs/src/hello/ngx_http_hello_module.o \
 	objs/src/event/modules/ngx_poll_module.o \
 	objs/src/os/unix/ngx_linux_sendfile_chain.o \
 	objs/src/core/ngx_regex.o \
@@ -182,6 +183,7 @@ nginx: \
 	objs/src/os/unix/ngx_linux_init.o \
 	objs/src/event/modules/ngx_rtsig_module.o \
 	objs/src/event/modules/ngx_epoll_module.o \
+	objs/src/hello/ngx_http_hello_module.o \
 	objs/src/event/modules/ngx_poll_module.o \
 	objs/src/os/unix/ngx_linux_sendfile_chain.o \
 	objs/src/core/ngx_regex.o \
@@ -480,6 +482,7 @@ objs/src/event/modules/ngx_epoll_module.o: \
 		-o objs/src/event/modules/ngx_epoll_module.o \
 		src/event/modules/ngx_epoll_module.c
 
+
 objs/src/event/modules/ngx_poll_module.o: \
 	src/event/modules/ngx_poll_module.c $(CORE_DEPS)
 	$(CC) -c $(CFLAGS)  $(CORE_INCS) \
@@ -503,6 +506,13 @@ objs/src/http/ngx_http.o: \
 	$(CC) -c $(CFLAGS)  $(CORE_INCS) $(HTTP_INCS) \
 		-o objs/src/http/ngx_http.o \
 		src/http/ngx_http.c
+
+objs/src/hello/ngx_http_hello_module.o: \
+        src/hello/ngx_http_hello_module.c $(CORE_DEPS) $(HTTP_DEPS)
+	$(CC) -c $(CFLAGS)  $(CORE_INCS) $(HTTP_INCS) \
+                -o objs/src/hello/ngx_http_hello_module.o \
+                src/hello/ngx_http_hello_module.c
+
 
 objs/src/http/ngx_http_core_module.o: \
 	src/http/ngx_http_core_module.c $(CORE_DEPS) $(HTTP_DEPS)

@@ -27,7 +27,6 @@ static ngx_command_t ngx_http_hello_commands[] = {
 
 static ngx_http_module_t ngx_http_hello_module_ctx = {
     NULL,
-    NULL,
 
     NULL,
     NULL,
@@ -41,18 +40,12 @@ static ngx_http_module_t ngx_http_hello_module_ctx = {
 
 
 ngx_module_t ngx_http_hello_module = {
-    NGX_MODULE_V1,
+    NGX_MODULE,
     &ngx_http_hello_module_ctx,
     ngx_http_hello_commands,
     NGX_HTTP_MODULE,
     NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NGX_MODULE_V1_PADDING
+    NULL
 };
 
 
@@ -64,26 +57,28 @@ ngx_http_hello_handler(ngx_http_request_t *r)
 {
     ngx_int_t       rc;
     ngx_buf_t       *b;
-    ngx_chain_t     out;
+    ngx_chain_t     *out;
 
-    r->headers_out.content_type.len = sizeof("text/plain") - 1;
-    r->headers_out.content_type.data = (u_char *) "text/plain";
+    r->headers_out.content_type->key.len = sizeof("Content-Type") - 1;
+    r->headers_out.content_type->key.data = (u_char *) "Content-Type";
+    r->headers_out.content_type->value.len = sizeof("text/html") - 1;
+    r->headers_out.content_type->value.data = (u_char *) "text/html";
 
     b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
     if (b == NULL) {
         return NGX_HTTP_INTERNAL_SERVER_ERROR; 
     }
 
-    out.buf = b;
-    out.next = NULL;
+    out->buf = b;
+    out->next = NULL;
 
     b->pos = ngx_hello_string;
-    b->last = ngx_hello_string + ngx_strlen(ngx_hello_string) - 1;
+    b->last = ngx_hello_string + ngx_strlen(ngx_hello_string);
     b->memory = 1;
     b->last_buf = 1;
 
     r->headers_out.status = NGX_HTTP_OK;
-    r->headers_out.content_length_n = ngx_strlen(ngx_hello_string) - 1;
+    r->headers_out.content_length_n = ngx_strlen(ngx_hello_string);
 
     rc = ngx_http_send_header(r);
     
@@ -91,7 +86,7 @@ ngx_http_hello_handler(ngx_http_request_t *r)
         return rc;
     }
 
-    return ngx_http_output_filter(r, &out);
+    return ngx_http_output_filter(r, out);
 }
 
 
