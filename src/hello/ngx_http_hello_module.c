@@ -9,7 +9,7 @@
 
 
 static char *ngx_http_hello(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-static ngx_int_t ngx_http_hello_handler(ngx_http_request_t *r);
+static ngx_int_t ngx_http_hello_handler(ngx_http_request_t *r, int error);
 
 
 static ngx_command_t ngx_http_hello_commands[] = {
@@ -53,11 +53,18 @@ static u_char ngx_hello_string[] = "hello world";
 
 
 static ngx_int_t
-ngx_http_hello_handler(ngx_http_request_t *r)
+ngx_http_hello_handler(ngx_http_request_t *r, int error)
 {
     ngx_int_t       rc;
     ngx_buf_t       *b;
     ngx_chain_t     *out;
+
+    ngx_chain_t      **ll, *cl;
+
+    r->headers_out.content_type = ngx_list_push(&r->headers_out.headers);
+    if (r->headers_out.content_type == NULL) {
+        return NGX_ERROR;
+    }
 
     r->headers_out.content_type->key.len = sizeof("Content-Type") - 1;
     r->headers_out.content_type->key.data = (u_char *) "Content-Type";
@@ -68,6 +75,12 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     if (b == NULL) {
         return NGX_HTTP_INTERNAL_SERVER_ERROR; 
     }
+
+    out = NULL;
+    ll = NULL;
+
+    ngx_alloc_link_and_set_buf(cl, b, r->pool, NGX_ERROR);
+    ngx_chain_add_link(out, ll, cl);
 
     out->buf = b;
     out->next = NULL;

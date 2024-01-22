@@ -1,7 +1,7 @@
 CC = gcc
 CPP = gcc -E
 LINK = $(CC)
-CFLAGS =   -O -g # -pipe  -O -W -Wall -Wpointer-arith -Wno-unused -Werror -g
+CFLAGS =   -O -g -ggdb # -pipe  -O -W -Wall -Wpointer-arith -Wno-unused -Werror -g
 
 ALL_INCS = -I src/core -I src/event -I src/event/modules -I src/os/unix -I objs -I src/http -I src/http/modules -I src/http/modules/proxy -I src/imap
 
